@@ -1,12 +1,13 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
 import { Content as Changelog } from "../../../../CHANGELOG.md";
+import { Icon } from "astro-icon/components";
 ---
 
 <SiteLayout title="Changelog · Thinking Orbs Native" description="Release notes for thinking-orbs-native.">
   <main id="main-content" class="changelog-section">
+    <a class="back-link" href="/"><Icon name="ph:arrow-left" /> Back to home</a>
     <div class="changelog-content"><Changelog /></div>
-    <a class="back-link" href="/">Back to Thinking Orbs</a>
   </main>
 </SiteLayout>
 
@@ -21,6 +22,9 @@ import { Content as Changelog } from "../../../../CHANGELOG.md";
   .changelog-content :global(li){margin-block:12px}
   .changelog-content :global(a){color:var(--ink);text-decoration:underline;text-underline-offset:3px}
   .changelog-content :global(a:focus-visible){outline:2px solid var(--ink);outline-offset:4px}
-  .back-link{display:inline-block;margin-top:48px;color:var(--ink);font-size:12px;text-underline-offset:3px}
+  .back-link{display:inline-flex;align-items:center;gap:8px;min-height:40px;margin-bottom:32px;padding:8px 12px;border:1px solid var(--line);color:var(--ink);font-size:12px;text-decoration:none}
+  .back-link :global(svg){width:14px;height:14px}
+  .back-link:hover{border-color:var(--muted)}
+  .back-link:focus-visible{outline:2px solid var(--ink);outline-offset:4px}
   @media(max-width:680px){.changelog-section{width:calc(100% - 28px);padding-block:48px}}
 </style>

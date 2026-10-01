@@ -2,6 +2,7 @@
 import "@fontsource-variable/geist-mono";
 import "../styles/globals.css";
 import "../styles/prose.css";
+import { ClientRouter } from "astro:transitions";
 import { config } from "virtual:nimbus/config";
 import { getCollectionLlmsUrl, getVersionStatus } from "@cloudflare/nimbus-docs";
 import AgentDirective from "@/components/AgentDirective.astro";
@@ -43,12 +44,17 @@ const llmsUrl = Astro.site
 <!doctype html>
 <html lang={lang}>
   <head>
+    <ClientRouter />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
     <script is:inline>
       (() => {
+        if (window.__nbApplyTheme) {
+          window.__nbApplyTheme();
+          return;
+        }
         const KEY = "ui-mode";
         const media = window.matchMedia("(prefers-color-scheme: dark)");
 
@@ -83,6 +89,7 @@ const llmsUrl = Astro.site
         });
 
         window.__nbApplyTheme = applyTheme;
+        document.addEventListener("astro:after-swap", applyTheme);
       })();
     </script>
 

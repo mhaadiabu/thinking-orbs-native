@@ -23,10 +23,17 @@ const { class: className, ...attrs } = Astro.props;
   aria-label="Toggle dark mode"
   data-nb-state="light"
 >
-  <Icon name="ph:sun" class="w-[1.125rem] h-[1.125rem] hidden group-data-[nb-state=dark]:block" />
-  <Icon name="ph:moon" class="w-[1.125rem] h-[1.125rem] group-data-[nb-state=dark]:hidden" />
+  <Icon name="ph:sun" data-theme-sun class="w-[1.125rem] h-[1.125rem]" />
+  <Icon name="ph:moon" data-theme-moon class="w-[1.125rem] h-[1.125rem]" />
 </button>
 
 <script>
   import "./theme-toggle.client";
 </script>
+
+<style>
+  [data-nb-state="light"] :global([data-theme-sun]),
+  [data-nb-state="dark"] :global([data-theme-moon]) {
+    display: none;
+  }
+</style>

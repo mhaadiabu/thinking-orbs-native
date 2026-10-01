@@ -1,23 +1,29 @@
 # Changelog
 
-## 0.1.2 - 2026-10-01
+## 0.1.2 - October 1, 2026
 
-### Fixed
+### More accurate visuals
 
-- Match upstream orb geometry with the correct radius floor, opacity cutoff, depth order, and 160-point shaping outline. [#5](https://github.com/mhaadiabu/thinking-orbs-native/pull/5)
-- Preserve each mark's opacity, grayscale, and overlap order with Skia pictures. Update the docs preview to use the same transparent ink and line caps. [#6](https://github.com/mhaadiabu/thinking-orbs-native/pull/6)
+Dots and connections now keep their transparency, grayscale, and overlap order. Faint marks no longer become opaque blocks, and shape transitions follow the original Thinking Orbs engine more closely.
 
-### Performance
+### Less work while idle
 
-- Stop scheduling animation frames while paused, inactive, or using reduced motion. Respond to reduced-motion changes while the app is running and preserve elapsed time on resume. Zero, negative, and non-finite speeds stop the clock. [#7](https://github.com/mhaadiabu/thinking-orbs-native/pull/7)
-- Reuse projected nodes and cached shaping outlines to reduce geometry computation. Wrap negative shaping time before selecting cached outlines. [#8](https://github.com/mhaadiabu/thinking-orbs-native/pull/8)
+Orbs stop scheduling animation frames when paused, when the app is inactive, or when reduced motion is enabled. Changes to the system's reduced-motion setting take effect while the app is running. Resuming continues from the saved animation position.
 
-The public API is unchanged.
+A zero, negative, or non-finite speed also stops the animation clock.
 
-[Compare with 0.1.1](https://github.com/mhaadiabu/thinking-orbs-native/compare/0.1.1...v0.1.2)
+### Faster animation calculations
 
-## 0.1.1 - 2026-08-09
+Connecting reuses node positions, and shaping reuses precomputed outlines. Both states do less computation each frame without changing their appearance.
 
-First tagged release of the React Native package, with nine orb states rendered using React Native Skia and Reanimated.
+The public API is unchanged. Update the package to use these fixes.
 
-[Release history](https://github.com/mhaadiabu/thinking-orbs-native/commits/0.1.1)
+[View release](https://github.com/mhaadiabu/thinking-orbs-native/releases/tag/v0.1.2)
+
+## 0.1.1 - August 9, 2026
+
+All nine Thinking Orbs states are available in React Native, using Skia and Reanimated to render animations on the UI thread.
+
+Choose a state, size, and theme. Adjust the animation speed or pause it, and provide an accessibility label when needed.
+
+[View release](https://github.com/mhaadiabu/thinking-orbs-native/releases/tag/0.1.1)

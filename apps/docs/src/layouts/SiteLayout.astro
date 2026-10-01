@@ -1,0 +1,18 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+import SiteHeader from "../components/SiteHeader.astro";
+import type { ComponentProps } from "astro/types";
+type Props = ComponentProps<typeof BaseLayout>;
+---
+
+<BaseLayout {...Astro.props}>
+  <div class="site-page">
+    <SiteHeader />
+    <slot />
+  </div>
+</BaseLayout>
+
+<style>
+  .site-page{--page:#090909;--ink:#ededed;--muted:#777;--line:#232323;min-height:100vh;background:var(--page);color:var(--ink);font-family:var(--nb-font-mono)}
+  :global(html:not([data-mode="dark"])) .site-page{--page:#f7f7f5;--ink:#171717;--muted:#74746e;--line:#d9d9d4}
+</style>

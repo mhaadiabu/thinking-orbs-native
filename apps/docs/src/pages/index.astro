@@ -1,7 +1,6 @@
 ---
-import BaseLayout from "../layouts/BaseLayout.astro";
+import SiteLayout from "../layouts/SiteLayout.astro";
 import OrbCanvas from "../components/OrbCanvas.astro";
-import { ThemeToggle } from "../components/ui/theme-toggle";
 import { Icon } from "astro-icon/components";
 import type { OrbState } from "../../../../src/types";
 
@@ -23,25 +22,12 @@ const usageSnippet = `import { ThinkingOrb } from '@mhaadi/thinking-orbs-native'
 <ThinkingOrb state="searching" size={64} />`;
 ---
 
-<BaseLayout
+<SiteLayout
   title="Thinking Orbs · React Native"
   description="Nine animated thinking states, rendered natively with Skia and Reanimated."
 >
   <div class="landing-page">
-    <header class="site-header shell">
-      <a class="brand" href="/" aria-label="Thinking Orbs home">
-        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
-        <span>thinking-orbs-native</span>
-      </a>
-      <nav aria-label="Main navigation">
-        <a href="#states">states</a>
-        <a href="#install">install</a>
-        <a class="icon-link" href="https://github.com/mhaadiabu/thinking-orbs-native" target="_blank" rel="noopener" aria-label="Source on GitHub">
-          <svg viewBox="0 0 100 100" aria-hidden="true"><path fill="currentColor" d="M50 1C22.39 1 0 23.386 0 51c0 22.092 14.327 40.834 34.193 47.446 2.499.462 3.417-1.085 3.417-2.406 0-1.192-.047-5.131-.068-9.309-13.91 3.025-16.846-5.9-16.846-5.9-2.274-5.779-5.551-7.315-5.551-7.315-4.537-3.104.341-3.04.341-3.04 5.022.353 7.665 5.153 7.665 5.153 4.46 7.644 11.697 5.434 14.55 4.156.449-3.232 1.745-5.437 3.175-6.686-11.106-1.264-22.78-5.552-22.78-24.71 0-5.459 1.953-9.92 5.151-13.42-.519-1.26-2.23-6.346.485-13.233 0 0 4.198-1.344 13.753 5.125 3.988-1.108 8.266-1.663 12.515-1.682 4.25.019 8.53.574 12.526 1.682 9.544-6.469 13.736-5.125 13.736-5.125 2.722 6.887 1.01 11.973.49 13.232 3.206 3.502 5.146 7.962 5.146 13.42 0 19.205-11.697 23.434-22.83 24.671 1.793 1.552 3.391 4.595 3.391 9.26 0 6.69-.058 12.074-.058 13.721 0 1.33.9 2.89 3.435 2.399C85.692 91.819 100 73.085 100 51 100 23.386 77.614 1 50 1Z"/></svg>
-        </a>
-        <ThemeToggle class="landing-theme-toggle" />
-      </nav>
-    </header>
+
 
     <main id="main-content">
       <section class="hero shell">
@@ -161,7 +147,7 @@ const usageSnippet = `import { ThinkingOrb } from '@mhaadi/thinking-orbs-native'
               </div>
               <button class="pause-button" data-pause aria-pressed="false">
                 <Icon name="ph:pause" data-pause-icon />
-                <Icon name="ph:play" data-play-icon class="hidden" />
+                <Icon name="ph:play" data-play-icon />
                 <span data-pause-label>pause</span>
               </button>
             </div>
@@ -177,6 +163,7 @@ const usageSnippet = `import { ThinkingOrb } from '@mhaadi/thinking-orbs-native'
           </div>
         </div>
       </section>
+
     </main>
 
     <footer class="site-footer shell">
@@ -190,6 +177,7 @@ const usageSnippet = `import { ThinkingOrb } from '@mhaadi/thinking-orbs-native'
         </p>
       </div>
       <div class="footer-links">
+        <a href="/changelog">changelog</a>
         <a class="brand-icon npm-icon" href="https://www.npmjs.com/package/@mhaadi/thinking-orbs-native" target="_blank" rel="noopener" aria-label="View package on npm">
           <svg viewBox="0 0 100 100" aria-hidden="true"><path fill="#c00" d="M0 0h100v100H0z"/><path fill="#fff" d="M49.66 10.74H10.74v78.516h38.916V30.54h19.8v58.716h19.8V10.74z"/></svg>
         </a>
@@ -201,120 +189,126 @@ const usageSnippet = `import { ThinkingOrb } from '@mhaadi/thinking-orbs-native'
   </div>
 
   <script>
-    const copyButtons = document.querySelectorAll<HTMLButtonElement>("[data-copy]");
-    copyButtons.forEach((button) => {
-      button.addEventListener("click", async () => {
-        try {
-          if (!navigator.clipboard) throw new Error("Clipboard unavailable");
-          await navigator.clipboard.writeText(button.dataset.copy ?? "");
-          button.textContent = "copied";
-        } catch {
-          button.textContent = "copy failed";
-        }
-        window.setTimeout(() => { button.textContent = "copy"; }, 1200);
+    import { mount } from "@cloudflare/nimbus-docs/client";
+
+    mount(".landing-page", () => {
+      const listeners = new AbortController();
+      const copyButtons = document.querySelectorAll<HTMLButtonElement>("[data-copy]");
+      copyButtons.forEach((button) => {
+        button.addEventListener("click", async () => {
+          try {
+            if (!navigator.clipboard) throw new Error("Clipboard unavailable");
+            await navigator.clipboard.writeText(button.dataset.copy ?? "");
+            button.textContent = "copied";
+          } catch {
+            button.textContent = "copy failed";
+          }
+          window.setTimeout(() => { button.textContent = "copy"; }, 1200);
+        }, { signal: listeners.signal });
       });
+
+      const playground = document.querySelector<HTMLElement>("[data-playground]");
+      if (playground) {
+        const canvas = playground.querySelector<HTMLCanvasElement>("[data-orb-canvas]");
+        const label = playground.querySelector<HTMLElement>("[data-preview-label]");
+        const snippet = playground.querySelector<HTMLElement>("[data-snippet]");
+        const pause = playground.querySelector<HTMLButtonElement>("[data-pause]");
+        const pauseLabel = pause?.querySelector<HTMLElement>("[data-pause-label]");
+        let state = "listening";
+        let size = 64;
+        let speed = 1;
+        let paused = false;
+
+        const update = () => {
+          if (canvas) {
+            canvas.dataset.state = state;
+            canvas.dataset.orbSize = String(size);
+            canvas.dataset.displaySize = size === 64 ? "128" : "60";
+            canvas.dataset.speed = String(speed);
+            canvas.setAttribute("aria-label", `${state} thinking indicator`);
+          }
+          if (label) label.textContent = `${state} / ${size}`;
+          if (snippet) snippet.textContent = `<ThinkingOrb state="${state}" size={${size}} speed={${speed}} />`;
+        };
+
+        playground.querySelectorAll<HTMLButtonElement>("[data-state-option]").forEach((button) => {
+          button.addEventListener("click", () => {
+            state = button.dataset.stateOption ?? state;
+            playground.querySelectorAll<HTMLElement>("[data-state-option]").forEach((item) => { item.classList.remove("active"); item.setAttribute("aria-checked", "false"); item.tabIndex = -1; });
+            button.classList.add("active");
+            button.setAttribute("aria-checked", "true"); button.tabIndex = 0;
+            update();
+          });
+        });
+
+        playground.querySelectorAll<HTMLButtonElement>("[data-size-option]").forEach((button) => {
+          button.addEventListener("click", () => {
+            size = Number(button.dataset.sizeOption ?? size);
+            playground.querySelectorAll<HTMLElement>("[data-size-option]").forEach((item) => { item.classList.remove("active"); item.setAttribute("aria-checked", "false"); item.tabIndex = -1; });
+            button.classList.add("active");
+            button.setAttribute("aria-checked", "true"); button.tabIndex = 0;
+            update();
+          });
+        });
+
+        playground.querySelectorAll<HTMLButtonElement>("[data-speed-option]").forEach((button) => {
+          button.addEventListener("click", () => {
+            speed = Number(button.dataset.speedOption ?? speed);
+            playground.querySelectorAll("[data-speed-option]").forEach((item) => item.classList.remove("active"));
+            button.classList.add("active");
+            update();
+          });
+        });
+
+        const setupRadioKeys = (selector: string) => {
+          const options = Array.from(playground.querySelectorAll<HTMLButtonElement>(selector));
+          options.forEach((button, index) => button.addEventListener("keydown", (event) => {
+            if (!["ArrowRight", "ArrowDown", "ArrowLeft", "ArrowUp"].includes(event.key)) return;
+            event.preventDefault();
+            const direction = event.key === "ArrowRight" || event.key === "ArrowDown" ? 1 : -1;
+            options[(index + direction + options.length) % options.length]?.focus();
+          }, { signal: listeners.signal }));
+        };
+        setupRadioKeys("[data-state-option]");
+        setupRadioKeys("[data-size-option]");
+
+        pause?.addEventListener("click", () => {
+          paused = !paused;
+          if (canvas) canvas.dataset.paused = String(paused);
+          pause.classList.toggle("active", paused);
+          pause.setAttribute("aria-pressed", String(paused));
+          if (pauseLabel) pauseLabel.textContent = paused ? "play" : "pause";
+        }, { signal: listeners.signal });
+      }
+      return () => listeners.abort();
     });
-
-    const playground = document.querySelector<HTMLElement>("[data-playground]");
-    if (playground) {
-      const canvas = playground.querySelector<HTMLCanvasElement>("[data-orb-canvas]");
-      const label = playground.querySelector<HTMLElement>("[data-preview-label]");
-      const snippet = playground.querySelector<HTMLElement>("[data-snippet]");
-      const pause = playground.querySelector<HTMLButtonElement>("[data-pause]");
-      const pauseIcon = pause?.querySelector<SVGElement>("[data-pause-icon]");
-      const playIcon = pause?.querySelector<SVGElement>("[data-play-icon]");
-      const pauseLabel = pause?.querySelector<HTMLElement>("[data-pause-label]");
-      let state = "listening";
-      let size = 64;
-      let speed = 1;
-      let paused = false;
-
-      const update = () => {
-        if (canvas) {
-          canvas.dataset.state = state;
-          canvas.dataset.orbSize = String(size);
-          canvas.dataset.displaySize = size === 64 ? "128" : "60";
-          canvas.dataset.speed = String(speed);
-          canvas.setAttribute("aria-label", `${state} thinking indicator`);
-        }
-        if (label) label.textContent = `${state} / ${size}`;
-        if (snippet) snippet.textContent = `<ThinkingOrb state="${state}" size={${size}} speed={${speed}} />`;
-      };
-
-      playground.querySelectorAll<HTMLButtonElement>("[data-state-option]").forEach((button) => {
-        button.addEventListener("click", () => {
-          state = button.dataset.stateOption ?? state;
-          playground.querySelectorAll<HTMLElement>("[data-state-option]").forEach((item) => { item.classList.remove("active"); item.setAttribute("aria-checked", "false"); item.tabIndex = -1; });
-          button.classList.add("active");
-          button.setAttribute("aria-checked", "true"); button.tabIndex = 0;
-          update();
-        });
-      });
-
-      playground.querySelectorAll<HTMLButtonElement>("[data-size-option]").forEach((button) => {
-        button.addEventListener("click", () => {
-          size = Number(button.dataset.sizeOption ?? size);
-          playground.querySelectorAll<HTMLElement>("[data-size-option]").forEach((item) => { item.classList.remove("active"); item.setAttribute("aria-checked", "false"); item.tabIndex = -1; });
-          button.classList.add("active");
-          button.setAttribute("aria-checked", "true"); button.tabIndex = 0;
-          update();
-        });
-      });
-
-      playground.querySelectorAll<HTMLButtonElement>("[data-speed-option]").forEach((button) => {
-        button.addEventListener("click", () => {
-          speed = Number(button.dataset.speedOption ?? speed);
-          playground.querySelectorAll("[data-speed-option]").forEach((item) => item.classList.remove("active"));
-          button.classList.add("active");
-          update();
-        });
-      });
-
-      const setupRadioKeys = (selector: string) => {
-        const options = Array.from(playground.querySelectorAll<HTMLButtonElement>(selector));
-        options.forEach((button, index) => button.addEventListener("keydown", (event) => {
-          if (!["ArrowRight", "ArrowDown", "ArrowLeft", "ArrowUp"].includes(event.key)) return;
-          event.preventDefault();
-          const direction = event.key === "ArrowRight" || event.key === "ArrowDown" ? 1 : -1;
-          options[(index + direction + options.length) % options.length]?.focus();
-        }));
-      };
-      setupRadioKeys("[data-state-option]");
-      setupRadioKeys("[data-size-option]");
-
-      pause?.addEventListener("click", () => {
-        paused = !paused;
-        if (canvas) canvas.dataset.paused = String(paused);
-        pause.classList.toggle("active", paused);
-        pause.setAttribute("aria-pressed", String(paused));
-        pauseIcon?.classList.toggle("hidden", paused);
-        playIcon?.classList.toggle("hidden", !paused);
-        if (pauseLabel) pauseLabel.textContent = paused ? "play" : "pause";
-      });
-    }
   </script>
-</BaseLayout>
+</SiteLayout>
 
 <style>
   .landing-page{--page:#090909;--panel:#101010;--panel-2:#141414;--ink:#ededed;--muted:#777;--line:#232323;min-height:100vh;min-height:100dvh;background:var(--page);color:var(--ink);font-family:var(--nb-font-mono);overflow-x:clip; -webkit-text-size-adjust:100%; text-size-adjust:100%}
   .landing-page *{min-width:0}
-  .landing-page img, .landing-page canvas, .landing-page svg{max-width:100%;height:auto;display:block}
+  .landing-page img, .landing-page canvas, .landing-page svg{max-width:100%;height:auto}
+  .landing-page img, .landing-page canvas{display:block}
   :global(html:not([data-mode="dark"])) .landing-page{--page:#f7f7f5;--panel:#fff;--panel-2:#efefec;--ink:#171717;--muted:#74746e;--line:#d9d9d4}
   /* Container: hex calc fallback for old Safari (no min() with calc), then modern min() — mirrors svg.mhaadi.dev max-w-6xl mx-auto px-4 pattern */
-  .shell{max-width:1160px;width:calc(100% - 48px);width:min(1160px,calc(100% - 48px));max-width:100%;margin-inline:auto;box-sizing:border-box;padding-inline:max(14px,env(safe-area-inset-left)) max(14px,env(safe-area-inset-right))}.site-header{height:68px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line)}
-  .brand{display:flex;align-items:center;gap:10px;color:var(--ink);text-decoration:none;font-size:12px;letter-spacing:-.02em}.brand-mark{position:relative;width:20px;height:20px;display:block}.brand-mark i{position:absolute;width:4px;height:4px;border-radius:50%;background:currentColor}.brand-mark i:nth-child(1){left:8px;top:1px}.brand-mark i:nth-child(2){right:1px;top:8px}.brand-mark i:nth-child(3){left:8px;bottom:1px}.brand-mark i:nth-child(4){left:1px;top:8px}.site-header nav{display:flex;align-items:center;gap:20px}.site-header nav a{color:var(--muted);font-size:10px;text-decoration:none;text-transform:uppercase;letter-spacing:.08em;transition:color .2s}.site-header nav a:hover{color:var(--ink)}.site-header nav .icon-link{display:grid;place-items:center;width:15px;height:15px}.icon-link svg{width:15px;height:15px}
-  :global(.landing-theme-toggle){width:30px!important;height:30px!important;border:1px solid var(--line)!important;border-radius:50%!important;color:var(--muted)!important}
+  .shell{max-width:1160px;width:calc(100% - 48px);width:min(1160px,calc(100% - 48px));max-width:100%;margin-inline:auto;box-sizing:border-box;padding-inline:max(14px,env(safe-area-inset-left)) max(14px,env(safe-area-inset-right))}
+  .brand{display:flex;align-items:center;gap:10px;color:var(--ink);text-decoration:none;font-size:12px;letter-spacing:-.02em}.brand-mark{position:relative;width:20px;height:20px;display:block}.brand-mark i{position:absolute;width:4px;height:4px;border-radius:50%;background:currentColor}.brand-mark i:nth-child(1){left:8px;top:1px}.brand-mark i:nth-child(2){right:1px;top:8px}.brand-mark i:nth-child(3){left:8px;bottom:1px}.brand-mark i:nth-child(4){left:1px;top:8px}
   .hero{min-height:680px;display:grid;grid-template-columns:1fr .88fr;gap:72px;align-items:center;padding-block:80px;min-width:0}.hero-copy{min-width:0;overflow-wrap:anywhere}.kicker{display:flex;align-items:center;gap:10px;margin:0 0 22px;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.14em}.kicker span{display:block;width:4px;height:4px;background:var(--ink)}
   h1,h2{margin:0;color:var(--ink);font-family:var(--nb-font-mono);font-weight:500;letter-spacing:-.07em;line-height:.94;overflow-wrap:anywhere}h1{font-size:clamp(38px,10vw,86px)}h2{font-size:clamp(32px,5vw,68px)}h1 em,h2 em{color:var(--muted);font:inherit;font-weight:300}.hero-lede{max-width:610px;margin:30px 0;color:var(--muted);font-size:13px;line-height:1.8;overflow-wrap:anywhere}.hero-actions{display:flex;gap:10px;flex-wrap:wrap}.button{display:inline-flex;align-items:center;gap:8px;padding:12px 16px;border:1px solid var(--line);font-size:11px;text-decoration:none;transition:.2s;white-space:nowrap}.button svg,.install-copy>a svg,.text-link svg{width:13px;height:13px}.button-primary{background:var(--ink);border-color:var(--ink);color:var(--page)}.button-primary:hover{background:var(--muted);border-color:var(--muted)}.button-secondary{color:var(--muted)}.button-secondary:hover{border-color:var(--ink);color:var(--ink)}
   .hero-stage{position:relative;min-height:486px;min-width:0;border:1px solid var(--line);background:var(--panel);display:grid;place-items:center;overflow:hidden;box-sizing:border-box}.stage-grid{position:absolute;inset:0;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:48px 48px;mask-image:linear-gradient(to bottom,transparent,black 18%,black 82%,transparent);-webkit-mask-image:linear-gradient(to bottom,transparent,black 18%,black 82%,transparent);opacity:.5}.hero-pill{position:relative;display:flex;align-items:center;gap:17px;width:304px;width:min(304px,calc(100% - 24px));max-width:100%;height:88px;padding:3px 16px 3px 7px;border:1px solid var(--line);border:1px solid color-mix(in srgb,var(--ink) 12%,transparent);border-radius:999px;background:var(--panel);background:color-mix(in srgb,var(--ink) 5%,var(--panel));box-shadow:none;box-shadow:inset 0 0 50px color-mix(in srgb,var(--ink) 2%,transparent);font-size:clamp(14px,4vw,18px);box-sizing:border-box;overflow:hidden;-webkit-overflow-scrolling:touch}.stage-readout{position:absolute;left:12px;right:12px;bottom:12px;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;color:var(--muted);font-size:9px;text-transform:uppercase;letter-spacing:.08em}.stage-readout span:first-child{color:var(--ink)}.stage-readout i{display:inline-block;width:4px;height:4px;margin-right:5px;background:var(--ink);animation:pulse 1.5s infinite}
   .shimmer{position:relative;color:var(--muted);color:color-mix(in srgb,var(--ink) 45%,transparent)}.shimmer::before{content:attr(data-text);position:absolute;inset:0;background:linear-gradient(90deg,transparent 35%,var(--ink) 50%,transparent 65%);background-size:400% 100%;background-clip:text;-webkit-background-clip:text;color:transparent;animation:shimmer 2.2s linear infinite}
   .states-section{padding-block:150px;min-width:0}.section-heading{display:grid;grid-template-columns:1fr 360px;align-items:end;gap:60px;margin-bottom:56px;min-width:0}.section-heading>p{margin:0;color:var(--muted);font-size:12px;line-height:1.8;min-width:0;overflow-wrap:anywhere}.state-grid{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line);border-left:1px solid var(--line);min-width:0}.state-card{position:relative;min-height:330px;min-width:0;border-right:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--page);display:flex;flex-direction:column;transition:background .2s;overflow:hidden}.state-card:hover{background:var(--panel)}.state-index{position:absolute;top:15px;right:16px;color:var(--muted);font-size:9px}.state-preview{flex:1;display:grid;place-items:center;padding:48px 16px 24px;min-width:0}.message-pill{display:flex;align-items:center;gap:12px;min-height:68px;height:auto;padding:6px 14px 6px 6px;border-radius:99px;border:1px solid var(--line);background:var(--panel-2);font-size:14px;max-width:100%;box-sizing:border-box;overflow:hidden;flex-wrap:nowrap}.message-pill .shimmer{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}.state-meta{display:flex;justify-content:space-between;align-items:end;gap:16px;padding:18px;border-top:1px solid var(--line);min-width:0}.state-meta h3{margin:0;color:var(--ink);font-size:12px;font-weight:500;overflow-wrap:anywhere}.state-meta p{margin:0;color:var(--muted);font-size:9px;text-align:right;overflow-wrap:anywhere}
   .install-section{padding-block:130px;border-block:1px solid var(--line);background:var(--panel);min-width:0}.install-grid{display:grid;grid-template-columns:.8fr 1.2fr;gap:100px;align-items:start;min-width:0}.install-copy{min-width:0;overflow-wrap:anywhere}.install-copy>p:not(.kicker){max-width:420px;margin:30px 0;color:var(--muted);font-size:12px;line-height:1.8;overflow-wrap:anywhere}.install-copy>a{display:inline-flex;align-items:center;gap:7px;color:var(--ink);font-size:10px;text-decoration:none}.code-stack{display:flex;flex-direction:column;gap:12px;min-width:0}.code-block{border:1px solid var(--line);background:var(--page);min-width:0;overflow:hidden;box-sizing:border-box}.code-label{display:flex;align-items:center;gap:12px;height:42px;padding:0 14px;border-bottom:1px solid var(--line);color:var(--muted);font-size:9px;text-transform:uppercase;letter-spacing:.1em;min-width:0}.code-label span{color:var(--ink)}.code-label button{margin-left:auto;border:0;background:none;color:var(--muted);font:inherit;cursor:pointer;flex-shrink:0}.code-label button:hover{color:var(--ink)}.code-block pre{margin:0;padding:22px;overflow:auto;-webkit-overflow-scrolling:touch;max-width:100%;background:transparent;color:var(--ink);font:11px/1.8 var(--nb-font-mono);white-space:pre-wrap;overflow-wrap:break-word;overflow-wrap:anywhere;word-break:break-word;box-sizing:border-box}
-  .playground-section{padding-block:140px;min-width:0}.playground-head{display:flex;align-items:end;justify-content:space-between;gap:16px;margin-bottom:40px;min-width:0;flex-wrap:wrap}.playground-head>p{max-width:380px;margin:0;color:var(--muted);font-size:11px;line-height:1.7;min-width:0;overflow-wrap:anywhere}.playground{display:grid;grid-template-columns:340px 1fr;border:1px solid var(--line);background:var(--panel);min-width:0;overflow:hidden;box-sizing:border-box}.controls{padding:24px;border-right:1px solid var(--line);min-width:0;box-sizing:border-box}.control-group{display:flex;flex-direction:column;gap:10px;margin-bottom:24px;min-width:0}.control-label{color:var(--muted);font-size:9px;text-transform:uppercase;letter-spacing:.12em}.state-tabs{display:grid;grid-template-columns:repeat(2,1fr);gap:5px;min-width:0}.state-tabs button,.size-tabs button,.speed-tabs button,.pause-button{height:34px;min-height:34px;border:1px solid var(--line);background:var(--page);color:var(--muted);font:9px var(--nb-font-mono);cursor:pointer;transition:.15s;box-sizing:border-box;min-width:0;-webkit-tap-highlight-color:transparent;touch-action:manipulation}.state-tabs button:hover,.size-tabs button:hover,.speed-tabs button:hover,.pause-button:hover{color:var(--ink);border-color:var(--muted)}.state-tabs button.active,.size-tabs button.active,.speed-tabs button.active,.pause-button.active{border-color:var(--ink);background:var(--panel);background:color-mix(in srgb,var(--ink) 8%,var(--page));color:var(--ink)}.control-row{display:flex;align-items:end;justify-content:space-between;gap:16px;flex-wrap:wrap;min-width:0}.control-row .control-group{margin:0}.size-tabs,.speed-tabs{display:flex;gap:5px;flex-wrap:wrap;min-width:0}.size-tabs button{width:60px;flex:0 0 auto}.speed-tabs button{padding-inline:8px;flex:0 0 auto}.pause-button{display:inline-flex;align-items:center;justify-content:center;gap:5px;width:78px;flex:0 0 auto}.pause-button svg{width:12px;height:12px}.playground-preview{position:relative;min-height:400px;display:grid;place-items:center;background:var(--page);overflow:hidden;min-width:0;box-sizing:border-box;isolation:isolate}.preview-crosshair::before,.preview-crosshair::after{content:"";position:absolute;background:var(--line)}.preview-crosshair::before{width:1px;height:100%;left:50%;top:0}.preview-crosshair::after{height:1px;width:100%;left:0;top:50%}.playground-preview>p{position:absolute;right:14px;bottom:12px;margin:0;color:var(--muted);font-size:9px}.playground-orb{position:absolute!important;left:50%;top:50%;z-index:1;transform:translate(-50%,-50%);max-width:100%;max-height:100%}.playground-code{grid-column:1/-1;display:flex;align-items:center;gap:18px;min-height:52px;padding:10px 16px;border-top:1px solid var(--line);color:var(--ink);font-size:10px;min-width:0;overflow:hidden;box-sizing:border-box}.playground-code>span{color:var(--ink);text-transform:uppercase;flex-shrink:0}.playground-code code{overflow:auto;-webkit-overflow-scrolling:touch;min-width:0;overflow-wrap:break-word;overflow-wrap:anywhere;word-break:break-word;white-space:pre-wrap}
+  .playground-section{padding-block:140px;min-width:0}.playground-head{display:flex;align-items:end;justify-content:space-between;gap:16px;margin-bottom:40px;min-width:0;flex-wrap:wrap}.playground-head>p{max-width:380px;margin:0;color:var(--muted);font-size:11px;line-height:1.7;min-width:0;overflow-wrap:anywhere}.playground{display:grid;grid-template-columns:340px 1fr;border:1px solid var(--line);background:var(--panel);min-width:0;overflow:hidden;box-sizing:border-box}.controls{padding:24px;border-right:1px solid var(--line);min-width:0;box-sizing:border-box}.control-group{display:flex;flex-direction:column;gap:10px;margin-bottom:24px;min-width:0}.control-label{color:var(--muted);font-size:9px;text-transform:uppercase;letter-spacing:.12em}.state-tabs{display:grid;grid-template-columns:repeat(2,1fr);gap:5px;min-width:0}.state-tabs button,.size-tabs button,.speed-tabs button,.pause-button{height:34px;min-height:34px;border:1px solid var(--line);background:var(--page);color:var(--muted);font:9px var(--nb-font-mono);cursor:pointer;transition:.15s;box-sizing:border-box;min-width:0;-webkit-tap-highlight-color:transparent;touch-action:manipulation}.state-tabs button:hover,.size-tabs button:hover,.speed-tabs button:hover,.pause-button:hover{color:var(--ink);border-color:var(--muted)}.state-tabs button.active,.size-tabs button.active,.speed-tabs button.active,.pause-button.active{border-color:var(--ink);background:var(--panel);background:color-mix(in srgb,var(--ink) 8%,var(--page));color:var(--ink)}.control-row{display:flex;align-items:end;justify-content:space-between;gap:16px;flex-wrap:wrap;min-width:0}.control-row .control-group{margin:0}.size-tabs,.speed-tabs{display:flex;gap:5px;flex-wrap:wrap;min-width:0}.size-tabs button{width:60px;flex:0 0 auto}.speed-tabs button{padding-inline:8px;flex:0 0 auto}.pause-button{display:inline-flex;align-items:center;justify-content:center;gap:5px;width:78px;flex:0 0 auto}.pause-button :global(svg){width:12px;height:12px}.playground-preview{position:relative;min-height:400px;display:grid;place-items:center;background:var(--page);overflow:hidden;min-width:0;box-sizing:border-box;isolation:isolate}.preview-crosshair::before,.preview-crosshair::after{content:"";position:absolute;background:var(--line)}.preview-crosshair::before{width:1px;height:100%;left:50%;top:0}.preview-crosshair::after{height:1px;width:100%;left:0;top:50%}.playground-preview>p{position:absolute;right:14px;bottom:12px;margin:0;color:var(--muted);font-size:9px}.playground-preview :global(.playground-orb){position:absolute!important;left:50%;top:50%;z-index:1;transform:translate(-50%,-50%);max-width:100%;max-height:100%}.playground-code{grid-column:1/-1;display:flex;align-items:center;gap:18px;min-height:52px;padding:10px 16px;border-top:1px solid var(--line);color:var(--ink);font-size:10px;min-width:0;overflow:hidden;box-sizing:border-box}.playground-code>span{color:var(--ink);text-transform:uppercase;flex-shrink:0}.playground-code code{overflow:auto;-webkit-overflow-scrolling:touch;min-width:0;overflow-wrap:break-word;overflow-wrap:anywhere;word-break:break-word;white-space:pre-wrap}
+  .pause-button[aria-pressed="false"] :global([data-play-icon]),
+  .pause-button[aria-pressed="true"] :global([data-pause-icon]){display:none}
+  .footer-links{align-items:center}
   .site-footer{min-height:138px;border-top:1px solid var(--line);display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:28px;color:var(--muted);font-size:9px}.site-footer p{margin:0}.site-footer a{color:inherit;text-decoration:none}.site-footer a:hover{color:var(--ink)}.text-link{display:inline-flex;align-items:center;gap:4px}.footer-credit{display:flex;flex-direction:column;align-items:center;gap:7px;text-align:center}.credit-note{display:flex;align-items:center;justify-content:center;gap:6px}.credit-link{display:inline-flex;align-items:center;gap:4px}.credit-link svg{width:8px;height:8px}.footer-links{display:flex;justify-self:end;gap:14px}.brand-icon{display:grid;place-items:center;width:18px;height:18px;color:var(--ink)}.brand-icon svg{width:100%;height:100%}.npm-icon{width:18px;height:18px}
   @keyframes shimmer{to{background-position:-100% 0}}@keyframes pulse{50%{opacity:.25}}
   @media(max-width:900px){.hero{grid-template-columns:1fr;min-height:auto}.hero-stage{min-height:430px}.section-heading,.install-grid{grid-template-columns:1fr;gap:36px}.state-grid{grid-template-columns:repeat(2,1fr)}.install-grid{gap:50px}.playground{grid-template-columns:280px 1fr}}
-  @media(max-width:680px){.shell{width:calc(100% - 28px);width:min(calc(100% - 28px),560px);max-width:100%}.site-header{height:58px}.site-header nav{gap:12px}.site-header nav a:nth-child(-n+2){display:none}.hero{padding-block:56px 48px;gap:40px}.hero-stage{min-height:300px}.hero-pill{width:250px;width:min(250px,calc(100% - 24px));height:76px;font-size:14px}.states-section,.playground-section{padding-block:96px}.state-grid{grid-template-columns:1fr}.state-card{min-height:300px}.install-section{padding-block:90px}.playground-head{display:block}.playground-head>p{margin-top:20px}.playground{grid-template-columns:1fr}.controls{border-right:0;border-bottom:1px solid var(--line)}.control-row{align-items:stretch;flex-wrap:wrap}.speed-tabs{flex-wrap:wrap;max-width:180px}.playground-preview{min-height:300px}.site-footer{grid-template-columns:1fr auto;padding-block:28px;gap:22px}.footer-credit{grid-column:1/-1;grid-row:2;align-items:flex-start;text-align:left}.credit-note{justify-content:flex-start;flex-wrap:wrap;gap:6px 8px}.footer-links{grid-column:2;grid-row:1}}
+  @media(max-width:680px){.shell{width:calc(100% - 28px);width:min(calc(100% - 28px),560px);max-width:100%}.hero{padding-block:56px 48px;gap:40px}.hero-stage{min-height:300px}.hero-pill{width:250px;width:min(250px,calc(100% - 24px));height:76px;font-size:14px}.states-section,.playground-section{padding-block:96px}.state-grid{grid-template-columns:1fr}.state-card{min-height:300px}.install-section{padding-block:90px}.playground-head{display:block}.playground-head>p{margin-top:20px}.playground{grid-template-columns:1fr}.controls{border-right:0;border-bottom:1px solid var(--line)}.control-row{align-items:stretch;flex-wrap:wrap}.speed-tabs{flex-wrap:wrap;max-width:180px}.playground-preview{min-height:300px}.site-footer{grid-template-columns:1fr auto;padding-block:28px;gap:22px}.footer-credit{grid-column:1/-1;grid-row:2;align-items:flex-start;text-align:left}.credit-note{justify-content:flex-start;flex-wrap:wrap;gap:6px 8px}.footer-links{grid-column:2;grid-row:1}}
   @media(max-width:380px){.hero{padding-block:48px 36px;gap:32px}h1{font-size:clamp(32px,9vw,52px)}h2{font-size:clamp(28px,8vw,40px)}.hero-stage{min-height:260px}.hero-pill{height:68px;gap:12px;padding:3px 12px 3px 6px}.state-preview{padding:40px 12px 20px}.playground-preview{min-height:260px}.code-block pre{padding:16px;font-size:10px}}
   @media(prefers-reduced-motion:reduce){.shimmer::before,.stage-readout i{animation:none}}
+  @media(max-width:380px){.site-footer .brand{font-size:10px;gap:6px}.footer-links{gap:8px}}
 </style>

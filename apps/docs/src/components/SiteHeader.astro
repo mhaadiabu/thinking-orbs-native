@@ -1,0 +1,32 @@
+---
+import { ThemeToggle } from "./ui/theme-toggle";
+---
+    <header class="site-header">
+      <div class="header-inner">
+      <a class="brand" href="/" aria-label="Thinking Orbs home">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+        <span>thinking-orbs-native</span>
+      </a>
+      <nav aria-label="Main navigation">
+        <a href="/#states">states</a>
+        <a href="/#install">install</a>
+        <a href="/changelog" aria-current={Astro.url.pathname === "/changelog" ? "page" : undefined}>changelog</a>
+        <a class="icon-link" href="https://github.com/mhaadiabu/thinking-orbs-native" target="_blank" rel="noopener" aria-label="Source on GitHub">
+          <svg viewBox="0 0 100 100" aria-hidden="true"><path fill="currentColor" d="M50 1C22.39 1 0 23.386 0 51c0 22.092 14.327 40.834 34.193 47.446 2.499.462 3.417-1.085 3.417-2.406 0-1.192-.047-5.131-.068-9.309-13.91 3.025-16.846-5.9-16.846-5.9-2.274-5.779-5.551-7.315-5.551-7.315-4.537-3.104.341-3.04.341-3.04 5.022.353 7.665 5.153 7.665 5.153 4.46 7.644 11.697 5.434 14.55 4.156.449-3.232 1.745-5.437 3.175-6.686-11.106-1.264-22.78-5.552-22.78-24.71 0-5.459 1.953-9.92 5.151-13.42-.519-1.26-2.23-6.346.485-13.233 0 0 4.198-1.344 13.753 5.125 3.988-1.108 8.266-1.663 12.515-1.682 4.25.019 8.53.574 12.526 1.682 9.544-6.469 13.736-5.125 13.736-5.125 2.722 6.887 1.01 11.973.49 13.232 3.206 3.502 5.146 7.962 5.146 13.42 0 19.205-11.697 23.434-22.83 24.671 1.793 1.552 3.391 4.595 3.391 9.26 0 6.69-.058 12.074-.058 13.721 0 1.33.9 2.89 3.435 2.399C85.692 91.819 100 73.085 100 51 100 23.386 77.614 1 50 1Z"/></svg>
+        </a>
+        <ThemeToggle class="landing-theme-toggle" />
+      </nav>
+      </div>
+    </header>
+
+<style>
+  .site-header{position:sticky;top:0;z-index:30;background:var(--page);border-bottom:1px solid var(--line)}
+  .header-inner{max-width:1160px;width:calc(100% - 48px);margin-inline:auto;padding-inline:14px;box-sizing:border-box;height:68px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .brand{display:flex;align-items:center;gap:10px;color:var(--ink);text-decoration:none;font-size:12px;letter-spacing:-.02em;white-space:nowrap}
+  .brand-mark{position:relative;width:20px;height:20px;flex-shrink:0;display:block}.brand-mark i{position:absolute;width:4px;height:4px;border-radius:50%;background:currentColor}.brand-mark i:nth-child(1){left:8px;top:1px}.brand-mark i:nth-child(2){right:1px;top:8px}.brand-mark i:nth-child(3){left:8px;bottom:1px}.brand-mark i:nth-child(4){left:1px;top:8px}
+  nav{display:flex;align-items:center;gap:20px}nav a{color:var(--muted);font-size:10px;text-decoration:none;text-transform:uppercase;letter-spacing:.08em}nav a:hover,nav a[aria-current="page"]{color:var(--ink)}nav .icon-link{display:grid;place-items:center;width:15px;height:15px}.icon-link svg{width:15px;height:15px}
+  :global(.landing-theme-toggle){width:30px!important;height:30px!important;border:1px solid var(--line)!important;border-radius:50%!important;color:var(--muted)!important}
+  a:focus-visible{outline:2px solid var(--ink);outline-offset:4px}
+  @media(max-width:680px){.header-inner{width:calc(100% - 28px);height:58px}nav{gap:12px}nav a:nth-child(-n+2){display:none}}
+  @media(max-width:380px){.brand{font-size:10px;gap:6px}nav{gap:8px}}
+</style>

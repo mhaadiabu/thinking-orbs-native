@@ -1,0 +1,26 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+import { Content as Changelog } from "../../../../CHANGELOG.md";
+---
+
+<SiteLayout title="Changelog · Thinking Orbs Native" description="Release notes for thinking-orbs-native.">
+  <main id="main-content" class="changelog-section">
+    <div class="changelog-content"><Changelog /></div>
+    <a class="back-link" href="/">Back to Thinking Orbs</a>
+  </main>
+</SiteLayout>
+
+<style>
+  .changelog-section{max-width:1160px;width:calc(100% - 48px);margin-inline:auto;padding:80px 14px;box-sizing:border-box}
+  .changelog-content{max-width:760px;color:var(--muted);font-size:13px;line-height:1.8;overflow-wrap:break-word}
+  .changelog-content :global(h1){margin:0 0 56px;color:var(--ink);font-size:clamp(32px,5vw,68px);font-weight:500;letter-spacing:-.07em;line-height:1}
+  .changelog-content :global(h2){margin:48px 0 24px;padding-top:28px;border-top:1px solid var(--line);color:var(--ink);font-size:20px;font-weight:500;letter-spacing:-.04em;line-height:1.4}
+  .changelog-content :global(h3){margin:24px 0 12px;color:var(--ink);font-size:13px;font-weight:500}
+  .changelog-content :global(p){margin:16px 0}
+  .changelog-content :global(ul){padding-left:20px;list-style:disc}
+  .changelog-content :global(li){margin-block:12px}
+  .changelog-content :global(a){color:var(--ink);text-decoration:underline;text-underline-offset:3px}
+  .changelog-content :global(a:focus-visible){outline:2px solid var(--ink);outline-offset:4px}
+  .back-link{display:inline-block;margin-top:48px;color:var(--ink);font-size:12px;text-underline-offset:3px}
+  @media(max-width:680px){.changelog-section{width:calc(100% - 28px);padding-block:48px}}
+</style>

@@ -35,9 +35,9 @@
   ],
   "scripts": {
     "test": "pnpm build && node --import ./tests/register-engine-loader.mjs --test tests/*.test.mjs",
-    "build": "pnpm clean && tsc -p tsconfig.json",
-    "typecheck": "tsc --noEmit -p tsconfig.json",
-    "lint": "tsc --noEmit -p tsconfig.json",
+    "build": "pnpm clean && tsrs -p tsconfig.json",
+    "typecheck": "tsrs --noEmit -p tsconfig.json",
+    "lint": "tsrs --noEmit -p tsconfig.json",
     "clean": "node ./scripts/clean.mjs",
     "pack:check": "pnpm build && pnpm exec publint && pnpm pack --dry-run",
     "prepublishOnly": "pnpm pack:check",
@@ -58,6 +58,6 @@
     "react-native-reanimated": "^4.5.3",
     "react-native-worklets": "^0.11.3",
     "turbo": "^2.10.9",
-    "typescript": "^7.0.2"
+    "tsrs": "7.1.0-beta.tsrs5"
   }
 }
